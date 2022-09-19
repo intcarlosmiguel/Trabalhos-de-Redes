@@ -66,3 +66,10 @@ def figure_hist(G,name,titulo):
     plt.bar(name,out,color = 'teal')
     plt.savefig("./out.jpg")
     plt.show()
+
+def draw_graph(G):
+    plt.figure(figsize=(8,8))
+    plt.title('Rede da Wikipedia')
+    nx.draw_kamada_kawai(G,with_labels=False,node_size = 50,alpha = 0.5,width = 0.5)
+    plt.savefig("./network.jpg")
+    plt.show()
