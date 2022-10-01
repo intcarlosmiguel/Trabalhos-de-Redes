@@ -4,40 +4,50 @@ import random
 import json
 from os import listdir
 
-def getWikipedia(url):
-    link = wikipedia.WikipediaPage(url).links
+def generate(texto,sites,neigh): # Gera aleatoriamente uma raiz
 
-    return url,link
-
-def generate(texto,sites,neigh):
+    a = 0
     while(texto in sites):
         texto = neigh[int(random.uniform(0, 1)*len(neigh))]
+        a+= 1
+        if(a==100):
+            return []
     return texto
 
 def generatejson(file,tam):
-    print()
-    if('data.json' not in listdir('./')):
-        original = 'https://en.wikipedia.org/wiki/Special:Random'
+    if(file not in listdir('./')):
         network = {}
         sites = []
-        texto = urllib.request.urlopen(original).geturl().split("/wiki/")[1]
-        while(len(network)<tam):
-            try:
-                site,neigh = getWikipedia(texto)
-            except:
-                texto = generate(site,sites,neigh)
-                continue
-                
-            network[site] = neigh
+        raiz = 'Electron'
+        vizinhoRaiz = wikipedia.WikipediaPage(raiz).links
 
-            sites.append(site)
-            texto = generate(site,sites,neigh)
-            
-            print(len(network),site)
+        network[raiz] = vizinhoRaiz
+        sites.append(raiz)
+        neigh = vizinhoRaiz
+        texto = raiz
+        #texto = generate(site,sites,neigh)
+        while(len(network)<tam):
+            texto = generate(texto,sites,neigh)
+            try:
+                link = wikipedia.WikipediaPage(texto).links
+            except:
+                texto = raiz
+                neigh = vizinhoRaiz
+                continue
+            viz = [i for i in link if i in vizinhoRaiz]
+            if(len(viz)<=1):
+                texto = raiz
+                neigh = vizinhoRaiz
+                continue
+            else:
+                network[texto] = link
+                sites.append(texto)
+                neigh = viz
+            print(len(network)-1,texto,len(viz))
         with open(file, 'w') as f:
             json.dump(network, f,ensure_ascii=False)
     else:
         print("Arquivo já foi gerado!")
 
 if(__name__ == '__main__'):
-    generatejson('data.json',500)
+    generatejson('data1.json',500)

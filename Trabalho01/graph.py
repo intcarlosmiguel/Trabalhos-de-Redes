@@ -3,7 +3,7 @@ import numpy as np
 import json
 import matplotlib.pyplot as plt
 
-def read_json_file(filename):
+def read_json_file(filename,cont):
     with open(filename) as f:
 
         data = json.load(f)
@@ -12,14 +12,21 @@ def read_json_file(filename):
 
         net = list(data.keys())
         lig = []
-        for i in range(len(net)):
-            site = net[i]
-            for j in net[:i]:
-                if(j in data[site]):
-                    lig.append((site,j))
-            for j in net[i+1:]:
-                if(site in data[j]):
-                    lig.append((j,site))
+        if(cont==0):
+            raiz = net[0]
+            lig.append((raiz,net[1]))
+            for i in range(len(net[2:])):
+                lig.append((raiz,net[i+2]))
+                lig.append((net[i+1],net[i+2]))
+        else:
+            for i in range(len(net)):
+                site = net[i]
+                for j in net[:i]:
+                    if(j in data[site]):
+                        lig.append((site,j))
+                for j in net[i+1:]:
+                    if(site in data[j]):
+                        lig.append((j,site))
         G.add_edges_from(lig)
 
         return G
