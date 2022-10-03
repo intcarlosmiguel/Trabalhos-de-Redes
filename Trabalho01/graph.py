@@ -3,33 +3,12 @@ import numpy as np
 import json
 import matplotlib.pyplot as plt
 
-def read_json_file(filename,cont):
-    with open(filename) as f:
+def read_json_file(Rede):
 
-        data = json.load(f)
-        G = nx.DiGraph()
-        G.add_nodes_from([i for i in data])
+    G = nx.DiGraph()
+    G.add_edges_from([i for i in Rede])
 
-        net = list(data.keys())
-        lig = []
-        if(cont==0):
-            raiz = net[0]
-            lig.append((raiz,net[1]))
-            for i in range(len(net[2:])):
-                lig.append((raiz,net[i+2]))
-                lig.append((net[i+1],net[i+2]))
-        else:
-            for i in range(len(net)):
-                site = net[i]
-                for j in net[:i]:
-                    if(j in data[site]):
-                        lig.append((site,j))
-                for j in net[i+1:]:
-                    if(site in data[j]):
-                        lig.append((j,site))
-        G.add_edges_from(lig)
-
-        return G
+    return G
 
 def hist_graph(G,name):
     if(name =='out'):
