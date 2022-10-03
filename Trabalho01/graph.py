@@ -1,6 +1,5 @@
 import networkx as nx
 import numpy as np
-import json
 import matplotlib.pyplot as plt
 
 def read_json_file(Rede):
@@ -18,31 +17,27 @@ def hist_graph(G,name):
 
 def metrics(G):
     print('Densidade da rede é:',nx.density(G))
-    try:
-        print(nx.diameter(G))
-    except:
-        #print("Rede pouco densa, portanto encontramos um diâmetro infinto")
-        print('Número de componentes fortemente conectadas: ', 
-                                  nx.number_strongly_connected_components(G))
-        comp = nx.strongly_connected_components(G)
-        comp = list(comp)
+    #print("Rede pouco densa, portanto encontramos um diâmetro infinto")
+    print('Número de componentes fortemente conectadas: ', nx.number_strongly_connected_components(G))
+    comp = nx.strongly_connected_components(G)
+    comp = list(comp)
+    g = nx.condensation(G)
 
-        g = nx.condensation(G)
-
-
-        nos = set(G.nodes)
-        maiorG = 0
-        path = 0
-        for k in range(len(comp)):
-            n = len(comp[k])
-            if n > 1:
-                g = G.copy()
-                g.remove_nodes_from(nos-set(comp[k]))
-                if(nx.diameter(g)>maiorG):
-                    maiorG = nx.diameter(g)
-                    path = nx.average_shortest_path_length(g)
-        print('Diâmetro:          {:5d}'.format(maiorG))
-        print('Comprimento médio: {:.3f}'.format(path))
+    nos = set(G.nodes)
+    maiorG = 0
+    path = 0
+    a = 0
+    for k in range(len(comp)):
+        n = len(comp[k])
+        if n > 1:
+            g = G.copy()
+            g.remove_nodes_from(nos-set(comp[k]))
+            if(n>a):
+                a = n
+                maiorG = nx.diameter(g)
+                path = nx.average_shortest_path_length(g)
+    print('Diâmetro:          {:5d}'.format(maiorG))
+    print('Comprimento médio: {:.3f}'.format(path))
     print('Agrupamento da rede é de:',nx.transitivity(G))
     print('Reciprocidade da rede é de:',nx.reciprocity(G))
 
@@ -63,7 +58,7 @@ def degree(G,name):
 def save_graph(G):
     nx.write_gpickle(G, "rede.gpickle")
 
-def figure_hist(G,name,titulo):
+def figure_hist(G,name,titulo,file):
     name,out = hist_graph(G,name)
     plt.figure(figsize=(8,8))
     plt.title(titulo)
@@ -71,7 +66,7 @@ def figure_hist(G,name,titulo):
     plt.ylabel("Quantidade de vezes que se repete")
     plt.xlim(-1,50)
     plt.bar(name,out,color = 'teal')
-    plt.savefig("./out.jpg")
+    plt.savefig(file)
     plt.show()
 
 def draw_graph(G):
