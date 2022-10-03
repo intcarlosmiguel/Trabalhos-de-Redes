@@ -31,13 +31,18 @@ def metrics(G):
 
 
         nos = set(G.nodes)
+        maiorG = 0
+        path = 0
         for k in range(len(comp)):
             n = len(comp[k])
             if n > 1:
                 g = G.copy()
                 g.remove_nodes_from(nos-set(comp[k]))
-        print('Diâmetro:          {:5d}'.format(nx.diameter(g)))
-        print('Comprimento médio: {:.3f}'.format(nx.average_shortest_path_length(g)))
+                if(nx.diameter(g)>maiorG):
+                    maiorG = nx.diameter(g)
+                    path = nx.average_shortest_path_length(g)
+        print('Diâmetro:          {:5d}'.format(maiorG))
+        print('Comprimento médio: {:.3f}'.format(path))
     print('Agrupamento da rede é de:',nx.transitivity(G))
     print('Reciprocidade da rede é de:',nx.reciprocity(G))
 
