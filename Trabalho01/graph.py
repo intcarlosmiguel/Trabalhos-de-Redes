@@ -21,7 +21,23 @@ def metrics(G):
     try:
         print(nx.diameter(G))
     except:
-        print("Rede pouco densa, portanto encontramos um diâmetro infinto")
+        #print("Rede pouco densa, portanto encontramos um diâmetro infinto")
+        print('Número de componentes fortemente conectadas: ', 
+                                  nx.number_strongly_connected_components(G))
+        comp = nx.strongly_connected_components(G)
+        comp = list(comp)
+
+        g = nx.condensation(G)
+
+
+        nos = set(G.nodes)
+        for k in range(len(comp)):
+            n = len(comp[k])
+            if n > 1:
+                g = G.copy()
+                g.remove_nodes_from(nos-set(comp[k]))
+        print('Diâmetro:          {:5d}'.format(nx.diameter(g)))
+        print('Comprimento médio: {:.3f}'.format(nx.average_shortest_path_length(g)))
     print('Agrupamento da rede é de:',nx.transitivity(G))
     print('Reciprocidade da rede é de:',nx.reciprocity(G))
 
